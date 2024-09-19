@@ -10,6 +10,9 @@ This ci/cd agent has the following tools installed:
 - age
 - yq
 - sops
+- wget
+- unzip
+- actions runner
 
 It copies(and need) a keys.txt file, which is an age recipient used by sops to decrypt your secrets, you can create one with:
 
