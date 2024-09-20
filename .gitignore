@@ -1,6 +1,10 @@
-# Local Keys
+# Local Keys and secrets
 id_rsa.pub
 keys.txt
+secrets.yaml
 
 # Volumes
 images/registry/registry/
+
+# File extensions
+*.pem
