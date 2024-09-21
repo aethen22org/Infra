@@ -27,4 +27,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: cd images/agent && cp /home/runner/sops/age/keys.txt keys.txt && docker build . -t registry-svc.registry.svc.cluster.local/agent:v0.0.3 && docker tag registry-svc.registry.svc.cluster.local/agent:v0.0.3 registry-svc.registry.svc.cluster.local/agent:latest && docker push registry-svc.registry.svc.cluster.local/agent:v0.0.3 && docker push registry-svc.registry.svc.cluster.local/agent:latest
+        run: cd images/agent && cp /home/runner/sops/age/keys.txt keys.txt && docker build . -t localhost/agent:v0.0.3 && docker tag localhost/agent:v0.0.3 localhost/agent:latest && docker push localhost/agent:v0.0.3 && docker push localhost/agent:latest
