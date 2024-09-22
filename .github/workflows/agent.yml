@@ -2,17 +2,8 @@ name: Agent
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch when affecting either the workflow or the agent folder
+  # Triggers the workflow on push events only when affecting either the workflow or the agent folder
   push:
-    branches: [ "main" ]
-    path:
-      - '.github/workflows/agent.yml'
-      - 'images/agent/**'
-    paths-ignore:
-      - 'images/agent/README.MD'
-      - 'images/agent/.gitignore'
-  pull_request:
-    branches: [ "main" ]
     path:
       - '.github/workflows/agent.yml'
       - 'images/agent/**'
