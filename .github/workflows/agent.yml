@@ -32,7 +32,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Step 1: Prepare environment (move to folder, copy keys, pull cache image)
+      # Step 1: Prepare environment (copy keys, pull cache image)
       - name: Prepare environment and pull cache image
         run: |
           cd images/agent
