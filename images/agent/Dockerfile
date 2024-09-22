@@ -27,9 +27,6 @@ RUN /home/linuxbrew/.linuxbrew/bin/brew install gcc
 RUN /home/linuxbrew/.linuxbrew/bin/brew install yq
 RUN /home/linuxbrew/.linuxbrew/bin/brew install sops
 
-# Create a directory for the runner
-RUN mkdir -p /home/agent && chown runner:runner /home/agent
-
 # Copy scripts for later usage
 COPY scripts /home/runner/scripts
 
