@@ -5,6 +5,7 @@ decryptSecretsYaml () {
     sops -d secrets.enc.yaml | yq '.data' | base64 -d > secrets.yaml
 }
 
+# Function for encrypting a secrets.yaml file into a secrets.enc.yaml sops-encrypted file
 encryptSecretsYaml () {
     base64Secrets="data: \""
     base64Secrets+="$(cat secrets.yaml | base64 -w 0)"
@@ -14,6 +15,7 @@ encryptSecretsYaml () {
     rm -rf secrets.b64.yaml
 }
 
+# If we have secrets already in place, we decrypt them and upgrade, if not, we create a new one and install
 if [ -f ./secrets.enc.yaml ]; then
   INSTALL=false
   echo "Decrypting secrets.enc.yaml"
@@ -53,23 +55,23 @@ GITHUB_INSTALLATION_ID=`yq '.github_application_instalation_id' secrets.yaml`
 GITHUB_APP_PRIVATE_KEY=`yq '.github_application_private_key' secrets.yaml`
 ORG=`yq '.organization' secrets.yaml`
 
-# Create kubernetes secrets
-kubectl create secret generic arc-gh-secret \
-    --namespace="${NAMESPACE}" \
-    --from-literal=github_app_id="${GITHUB_APPID}" \
-    --from-literal=github_app_installation_id="${GITHUB_INSTALLATION_ID}" \
-    --from-literal=github_app_private_key="$(GITHUB_APP_PRIVATE_KEY)"
-
 if [ "$INSTALL" = "true" ]; then
+  # We create the namespace so the secrets can be created on it
+  kubectl create namespace ${NAMESPACE}
+  # Create kubernetes secrets
+  kubectl create secret generic arc-gh-secret \
+      --namespace="${NAMESPACE}" \
+      --from-literal=github_app_id="${GITHUB_APPID}" \
+      --from-literal=github_app_installation_id="${GITHUB_INSTALLATION_ID}" \
+      --from-literal=github_app_private_key="$(GITHUB_APP_PRIVATE_KEY)"
   # Install arc controller
-  helm upgrade arc \
+  helm install arc \
       --namespace "${NAMESPACE}" \
       --create-namespace \
       oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller \
       -f controller.values.yaml
-
   # Install arc runner
-  helm upgrade arc-runner-set \
+  helm install arc-runner-set \
       --namespace "${NAMESPACE}" \
       --create-namespace \
       --set githubConfigUrl="https://github.com/${ORG}" \
@@ -82,7 +84,6 @@ else
       --create-namespace \
       oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller \
       -f controller.values.yaml
-
   # Upgrade arc runner
   helm upgrade arc-runner-set \
       --namespace "${NAMESPACE}" \
