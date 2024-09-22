@@ -78,6 +78,14 @@ if [ "$INSTALL" = "true" ]; then
       oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set \
       -f scaleset.values.yaml
 else
+  # Delete Kubernetes secrets in case we need to replace them
+  kubectl delete secret arc-gh-secret
+  # Create kubernetes secrets
+  kubectl create secret generic arc-gh-secret \
+      --namespace="${NAMESPACE}" \
+      --from-literal=github_app_id="${GITHUB_APPID}" \
+      --from-literal=github_app_installation_id="${GITHUB_INSTALLATION_ID}" \
+      --from-literal=github_app_private_key="$(GITHUB_APP_PRIVATE_KEY)"
   # Upgrade arc controller
   helm upgrade arc \
       --namespace "${NAMESPACE}" \
