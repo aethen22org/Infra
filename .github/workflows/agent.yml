@@ -1,0 +1,52 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch when affecting either the workflow or the agent folder
+  push:
+    branches: [ "main" ]
+    path:
+      - '.github/workflows/agent.yml'
+      - 'images/agent/**'
+    paths-ignore:
+      - 'images/agent/README.MD'
+      - 'images/agent/.gitignore'
+  pull_request:
+    branches: [ "main" ]
+    path:
+      - '.github/workflows/agent.yml'
+      - 'images/agent/**'
+    paths-ignore:
+      - 'images/agent/README.MD'
+      - 'images/agent/.gitignore'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # We only have a build job
+  build:
+    # We run on our arc runners
+    runs-on: arc-runner-set
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Step 1: Prepare environment (move to folder, copy keys, pull cache image)
+      - name: Prepare environment and pull cache image
+        run: |
+          cd images/agent
+          cp /home/runner/sops/age/keys.txt keys.txt
+          docker pull registry-svc.registry.svc.cluster.local/agent:latest || true
+
+      # Step 3: Build the Docker image with cache and push it
+      - name: Build Docker image
+        run: |
+          cd images/agent
+          COMMIT_SHA=${GITHUB_SHA::7}
+          docker build . \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --cache-from registry-svc.registry.svc.cluster.local/agent:latest \
+            -t registry-svc.registry.svc.cluster.local/agent:$COMMIT_SHA \
+            -t registry-svc.registry.svc.cluster.local/agent:latest
+          docker push registry-svc.registry.svc.cluster.local/agent -a
