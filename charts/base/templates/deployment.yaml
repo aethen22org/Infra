@@ -1,0 +1,179 @@
+{{- if .Values.k8s.deployment.enabled -}}
+apiVersion: apps/v1
+kind: {{ .Values.k8s.deployment.kind }}
+metadata:
+  name: {{ include "base.name" . }}
+  labels:
+    {{ include "base.labels" . | nindent 4 }}
+  annotations:
+    {{ .Values.k8s.extraAnnotations }}
+  namespace: {{ if .Values.k8s.namespace }}{{ .Values.k8s.namespace }}{{ else }}{{ template "base.name" . }}{{- end }}
+spec:
+  {{ if not .Values.k8s.hpa.enabled }}
+  replicas: {{ .Values.k8s.deployment.replicaCount }}
+  {{ end }}
+  selector:
+    matchLabels:
+      {{ include "base.labels" . | nindent 6 }}
+  {{ if eq .Values.k8s.deployment.kind "StatefulSet" }}
+  serviceName: {{ .Values.k8s.service.name }}
+  {{ if .Values.k8s.deployment.kind.podManagementPolicy }}
+  podManagementPolicy: {{ .Values.k8s.deployment.kind.podManagementPolicy }}
+  {{ end }}
+  {{ end }}
+  {{ if eq .Values.k8s.hpa.enabled false}}
+  replicas: {{ .Values.k8s.deployment.replicaCount }}
+  {{ end }}
+  {{ if eq .Values.k8s.deployment.kind "Deployment" }}
+  strategy:
+    type: {{ .Values.k8s.deployment.strategy.type }}
+    {{ if eq .Values.k8s.deployment.strategy.type "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ .Values.k8s.deployment.strategy.maxSurge }}
+      maxUnavailable: {{ .Values.k8s.deployment.strategy.maxUnavailable }}
+    {{ end }}
+  {{ end }}
+  template:
+    metadata:
+      {{ if or .Values.k8s.deployment.podAnnotations .Values.k8s.extraAnnotations }}
+      annotations:
+        {{ if .Values.k8s.deployment.podAnnotations }}
+        {{- toYaml .Values.k8s.deployment.podAnnotations | nindent 8 }}
+        {{ end }}
+        {{ if .Values.k8s.extraAnnotations }}
+        {{- toYaml .Values.k8s.extraAnnotations | nindent 8 }}
+        {{ end }}
+      {{ end }}
+      labels:
+        {{- include "base.labels" . | nindent 8 }}
+    spec:
+      {{ if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 6 }}
+      {{ end }}
+      {{ if .Values.k8s.deployment.serviceAccount.create }}
+      serviceAccount: "{{ include "base.name" . }}"
+      serviceAccountName: "{{ include "base.name" . }}"
+      {{ end}}
+      {{ if .Values.k8s.deployment.securityContext }}
+      securityContext:
+        {{- toYaml .Values.k8s.deployment.securityContext | nindent 8 }}
+      {{ end }}
+      containers:
+        - name: {{ template "base.name" . }}
+          {{ if .Values.k8s.deployment.image.registry }}
+          image: "{{ .Values.k8s.deployment.image.registry }}/{{ .Values.k8s.deployment.image.tag | default .Chart.AppVersion }}"
+          {{ else }}
+          image: {{ .Values.k8s.deployment.image.tag }}
+          {{ end }}
+          imagePullPolicy: {{ .Values.k8s.deployment.image.pullPolicy }}
+          {{ if .Values.k8s.deployment.command }}
+          command:
+          {{ toYaml .Values.k8s.deployment.command | nindent 10 }}
+          {{ end }}
+          {{ if .Values.k8s.deployment.args }}
+          args:
+          {{ toYaml .Values.k8s.deployment.args }}
+          {{ end }}
+          ports:
+            - name: {{ .Values.k8s.service.name | trunc 15 | trimSuffix "-" }}
+              containerPort: {{ .Values.k8s.service.internalPort }}
+              protocol: {{ .Values.k8s.service.protocol }}
+            {{ range $port := .Values.k8s.service.extraPorts }}
+            {{ if ne $port.internalPort $.Values.k8s.service.internalPort }}
+            - name: {{ $port.name | trunc 15 | trimSuffix "-" }}
+              containerPort: {{ $port.internalPort }}
+              protocol: {{ $port.protocol }}
+            {{ end }}
+            {{ end }}
+            {{ range $port := .Values.k8s.deployment.extraPorts }}
+            {{ if ne $port.internalPort $.Values.k8s.service.internalPort }}
+            - name: {{ $port.name | trunc 15 | trimSuffix "-" }}
+              containerPort: {{ $port.port }}
+              protocol: {{ $port.protocol }}
+            {{ end }}
+            {{ end }}
+          {{ if .Values.k8s.deployment.enableProbes }}
+          livenessProbe:
+            {{- toYaml .Values.k8s.deployment.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.k8s.deployment.readinessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.k8s.deployment.startupProbe | nindent 12 }}
+          {{ end }}
+          resources:
+            {{ if .Values.k8s.deployment.resources.limits }}
+            limits:
+              {{ if and .Values.k8s.deployment.resources.limits .Values.k8s.deployment.resources.limits.cpu }}
+              cpu: {{ .Values.k8s.deployment.resources.limits.cpu }}
+              {{ end }}
+              {{ if and .Values.k8s.deployment.resources.limits .Values.k8s.deployment.resources.limits.memory }}
+              memory: {{ .Values.k8s.deployment.resources.limits.memory}}
+              {{ end }}
+            {{ end }}
+            requests:
+              cpu: {{ .Values.k8s.deployment.resources.requests.cpu }}
+              memory: {{ .Values.k8s.deployment.resources.requests.memory }}
+          env:
+          - name: APP_NAME
+            value: {{ template "base.name" . }}
+          - name: APP_NAMESPACE
+            value: {{ if .Values.k8s.namespace }}{{ .Values.k8s.namespace }}{{ else }}{{ template "base.name" . }}{{- end }}
+          {{ if .Values.k8s.deployment.environment.extraVars }}
+          {{ toYaml .Values.k8s.deployment.environment.extraVars | nindent 10}}
+          {{ end}}
+          volumeMounts:
+          {{ if .Values.k8s.persistentVolume.enabled }}
+          - name: {{ .Values.k8s.persistentVolume.name }}
+            mountPath: {{ .Values.k8s.persistentVolume.mountPath }}
+            {{ if .Values.k8s.persistentVolume.subPath }}
+            subPath: "{{ .Values.k8s.persistentVolume.subPath }}"
+            {{ end }}
+          {{ end }}
+          {{ range $secret := .Values.k8s.secrets }}
+          - name: "{{ $secret.name }}"
+            {{ if $secret.mountPath }}
+            mountPath: "{{ $secret.mountPath }}"
+            {{ end }}
+            {{ if $secret.subPath }}
+            subPath: "{{ $secret.subPath }}"
+            {{ end }}
+            {{ if $secret.readOnly }}
+            readOnly: "{{ $secret.readOnly }}"
+            {{ end }}
+          {{ end }}
+      {{ if or .Values.k8s.persistentVolume.enabled .Values.k8s.secrets }}
+      volumes:
+      {{ end }}
+      {{ if .Values.k8s.persistentVolume.enabled }}
+      - name: {{ .Values.k8s.persistentVolume.name }}
+        persistentVolumeClaim:
+          claimName: {{ if .Values.k8s.persistentVolume.claim }}{{ .Values.k8s.persistentVolume.claim }}{{ else }}{{ template "base.name" . }}{{- end }}
+      {{ end  }}
+      {{ range $secret := .Values.k8s.secrets }}
+      {{- if $secret.mountPath }}
+      - name: "{{ $secret.name }}"
+        secret:
+          secretName: "{{ $secret.name }}"
+          {{ if $secret.defaultMode }}
+          defaultMode: {{ $secret.defaultMode }}
+          {{ end }}
+      {{- end }}
+      {{ end }}
+      {{ if .Values.k8s.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.k8s.deployment.nodeSelector | indent 8 }}
+      {{- end }}
+      {{ if .Values.k8s.deployment.affinitiy  }}
+      affinity:
+        {{- toYaml .Values.k8s.deployment.affinitiy | nindent 8 }}
+      {{ end }}
+      {{ if .Values.k8s.deployment.tolerations  }}
+      tolerations:
+        {{- toYaml .Values.k8s.deployment.tolerations  | nindent 8 }}
+      {{ end }}
+      {{ if .Values.k8s.deployment.hostAliases }}
+      hostaliases:
+      {{- toYaml .Values.k8s.deployment.hostAliases | nindent 6 }}
+      {{ end }}
+{{ end }}

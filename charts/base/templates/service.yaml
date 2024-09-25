@@ -1,0 +1,29 @@
+{{- if .Values.k8s.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "base.name" . }}
+  labels:
+    {{ include "base.labels" . | nindent 4 }}
+  annotations:
+    {{ .Values.k8s.extraAnnotations }}
+  namespace: {{ if .Values.k8s.namespace }}{{ .Values.k8s.namespace }}{{ else }}{{ template "base.name" . }}{{- end }}
+spec:
+  type: {{ .Values.k8s.service.type }}
+  {{- if .Values.k8s.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.k8s.service.loadBalancerIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.k8s.service.externalPort }}
+      targetPort: {{ .Values.k8s.service.internalPort }}
+      protocol: {{ .Values.k8s.service.protocol }}
+      name: {{ .Values.k8s.service.name }}
+    {{ range $port := .Values.k8s.service.extraPorts }}
+    - port: {{ $port.externalPort }}
+      targetPort: {{ $port.internalPort }}
+      protocol: {{ $port.protocol }}
+      name: {{ $port.name }}
+    {{ end }}
+  selector:
+    app: {{ template "base.name" . }}
+{{- end -}}

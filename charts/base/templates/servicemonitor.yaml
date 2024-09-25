@@ -1,0 +1,21 @@
+{{- if .Values.k8s.monitoring.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "base.name" . }}
+  labels:
+    {{ include "base.labels" . | nindent 4 }}
+  annotations:
+    {{ .Values.k8s.namespace }}
+  namespace: {{ if .Values.k8s.namespace }}{{ .Values.k8s.namespace }}{{ else }}{{ template "base.name" . }}{{- end }}
+spec:
+  namespaceSelector:
+    any: false
+    matchNames:
+    - {{ if .Values.k8s.namespace }}{{ .Values.k8s.namespace }}{{ else }}{{ template "base.name" . }}{{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "base.name" }}
+  endpoints:
+  {{ .Values.k8s.monitoring.serviceMonitor.endpoints | toYaml | nindent 4 }}
+{{- end }}

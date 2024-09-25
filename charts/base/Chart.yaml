@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Base chart
+name: base
+version: v0.0.1

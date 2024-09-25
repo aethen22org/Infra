@@ -1,0 +1,48 @@
+{{- if .Values.k8s.hpa.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "base.name" . }}
+  labels:
+    {{ include "base.labels" . | nindent 4 }}
+  annotations:
+    {{ .Values.k8s.extraAnnotations }}
+  namespace: {{ if .Values.k8s.namespace }}{{ .Values.k8s.namespace }}{{ else }}{{ template "base.name" . }}{{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ template "base.name" . }}
+  minReplicas: {{ .Values.k8s.hpa.minReplicas }}
+  maxReplicas: {{ .Values.k8s.hpa.maxReplicas }}
+  metrics:
+    {{- if .Values.k8s.hpa.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.k8s.hpa.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.k8s.hpa.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.k8s.hpa.targetMemoryUtilizationPercentage }}
+    {{- end }}
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: {{ .Values.k8s.hpa.scaleDown.stabilizationWindowSeconds }}
+      selectPolicy: {{ .Values.k8s.hpa.scaleDown.selectPolicy }}
+      {{- with .Values.k8s.hpa.scaleDown.policies }}
+      policies: {{ toYaml . | nindent 6 }}
+      {{- end }}
+    scaleUp:
+      stabilizationWindowSeconds: {{ .Values.k8s.hpa.scaleUp.stabilizationWindowSeconds }}
+      selectPolicy: {{ .Values.k8s.hpa.scaleUp.selectPolicy }}
+      {{- with .Values.k8s.hpa.scaleUp.policies }}
+      policies: {{ toYaml . | nindent 6 }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,28 @@
+{{ if .Values.k8s.persistentVolume.localPath }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "base.name" . }}
+  labels:
+    {{ include "base.labels" . | nindent 4 }}
+  annotations:
+    {{ .Values.k8s.extraAnnotations }}
+  namespace: {{ if .Values.k8s.namespace }}{{ .Values.k8s.namespace }}{{ else }}{{ template "base.name" . }}{{- end }}
+spec:
+  capacity:
+    storage: {{ .Values.k8s.persistentVolume.size | quote }}
+  accessModes:
+    - {{ .Values.k8s.persistentVolume.accessModes }}
+  persistentVolumeReclaimPolicy: {{ .Values.k8s.persistentVolume.persistentVolumeReclaimPolicy }}
+  storageClassName: {{ .Values.k8s.persistentVolume.class }}
+  local:
+    path: {{ .Values.k8s.persistentVolume.localPath }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - {{ .Values.k8s.defaultNode }}
+{{- end }}
