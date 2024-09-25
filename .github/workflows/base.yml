@@ -19,16 +19,14 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-
-      # Step 1: Prepare environment (copy keys, pull cache image)
       - name: Check if chart renders
         run: |
+          (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"')
           cd charts/base
           helm template .
-
-      # Step 3: Build the Docker image with cache and push it
       - name: Package and push helm chart
         run: |
+          (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"')
           cd charts/base
           helm package . --version 1.0.0
           helm push ./base-v0.0.1.tgz oci://registry.registry.svc.cluster.local/
