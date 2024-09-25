@@ -17,15 +17,10 @@ RUN apt install -y \
 
 # Install brew and run the necessary commands to set it up
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-RUN (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /root/.bashrc
-RUN eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+RUN (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/runner/.bashrc
 
-# Install gcc for compatilibity
-RUN /home/linuxbrew/.linuxbrew/bin/brew install gcc
-
-# Install yq and sops for secret management
-RUN /home/linuxbrew/.linuxbrew/bin/brew install yq
-RUN /home/linuxbrew/.linuxbrew/bin/brew install sops
+# Install brew utilities
+RUN /home/linuxbrew/.linuxbrew/bin/brew install gcc yq sops kubectl helm
 
 # Copy scripts for later usage
 COPY scripts /home/runner/scripts
