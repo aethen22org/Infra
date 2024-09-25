@@ -1,0 +1,34 @@
+name: Base chart
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events only when affecting either the workflow or the agent folder
+  push:
+    paths:
+      - '.github/workflows/base.yml'
+      - 'charts/base/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # We only have a build job
+  build:
+    # We run on our arc runners
+    runs-on: arc-runner-set
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Step 1: Prepare environment (copy keys, pull cache image)
+      - name: Check if chart renders
+        run: |
+          cd charts/base
+          helm template .
+
+      # Step 3: Build the Docker image with cache and push it
+      - name: Package and push helm chart
+        run: |
+          cd charts/base
+          helm package . --version 1.0.0
+          helm push ./base-v0.0.1.tgz oci://registry.registry.svc.cluster.local/
