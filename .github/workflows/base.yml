@@ -29,4 +29,4 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cd charts/base
           helm package . --version 1.0.0
-          helm push ./base-v0.0.1.tgz oci://registry.registry.svc.cluster.local/
+          helm push ./base-v1.0.0.tgz oci://registry.registry.svc.cluster.local/
