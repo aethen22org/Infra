@@ -31,8 +31,5 @@ COPY keys.txt /home/runner/sops/age/keys.txt
 ENV XDG_CONFIG_HOME=/home/runner
 ENV HOME=/home/runner
 
-# Init helmfile
-RUN helmfile init
-
 # Return to default user
 USER runner
