@@ -1,0 +1,9 @@
+repositories:
+  - name: helm-repository 
+    url: http://127.0.0.1:8080/
+releases:
+  - name: helm-registry
+    chart: helm-repository/base
+    version: v1.0.0
+    values:
+      - ./values.yaml
