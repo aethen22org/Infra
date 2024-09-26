@@ -4,7 +4,6 @@ repositories:
 releases:
   - name: helm-registry
     chart: helm-repository/base
-    namespace: default
     version: v1.0.0
     values:
       - ./values.yaml
