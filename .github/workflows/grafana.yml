@@ -1,4 +1,4 @@
-name: Helm registry
+name: Grafana
 
 env:
   version: v1.0.0

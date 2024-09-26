@@ -1,4 +1,4 @@
-name: Helm registry
+name: Prometheus
 
 env:
   version: v1.0.0
