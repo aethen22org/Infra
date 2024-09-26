@@ -9,7 +9,7 @@ on:
   push:
     paths:
       - '.github/workflows/helm.yml'
-      - 'tools/registry/helm/**'
+      - 'tools/registry/helm/dev/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
