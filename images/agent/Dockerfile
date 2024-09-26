@@ -19,7 +19,7 @@ RUN apt install -y \
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install brew utilities
-RUN /home/linuxbrew/.linuxbrew/bin/brew install gcc yq sops kubectl helm
+RUN /home/linuxbrew/.linuxbrew/bin/brew install gcc yq sops kubectl helmfile
 
 # Copy scripts for later usage
 COPY scripts /home/runner/scripts
@@ -30,6 +30,9 @@ COPY keys.txt /home/runner/sops/age/keys.txt
 # Setup XDG_CONFIG_HOME and HOME environmental variable for sops
 ENV XDG_CONFIG_HOME=/home/runner
 ENV HOME=/home/runner
+
+# Init helmfile
+RUN helmfile init
 
 # Return to default user
 USER runner
