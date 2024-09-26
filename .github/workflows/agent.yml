@@ -20,15 +20,21 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      # Step 1: Prepare environment (copy keys, pull cache image)
+      - name: Prepare environment and pull cache image
+        run: |
+          cd images/agent
+          cp /home/runner/sops/age/keys.txt keys.txt
+          docker pull docker-registry.docker-registry.svc.cluster.local/agent:latest || true
 
       # Step 3: Build the Docker image with cache and push it
       - name: Build Docker image
         run: |
           cd images/agent
           COMMIT_SHA=${GITHUB_SHA::7}
-          cp /home/runner/sops/age/keys.txt keys.txt
           docker build . \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --cache-from docker-registry.docker-registry.svc.cluster.local/agent:latest \
             -t docker-registry.docker-registry.svc.cluster.local/agent:$COMMIT_SHA \
             -t docker-registry.docker-registry.svc.cluster.local/agent:latest
           docker push docker-registry.docker-registry.svc.cluster.local/agent -a
