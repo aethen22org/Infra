@@ -35,8 +35,6 @@ Common labels
 */}}
 {{- define "base.labels" -}}
 app: {{ template "base.name" $ }}
-version: {{ $.Values.appVersion }}
-helm.sh/chart: {{ include "base.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
