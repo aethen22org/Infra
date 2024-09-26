@@ -1,6 +1,6 @@
 repositories:
   - name: helm-repository 
-    url: http://helm-registry.helm-registry.svc.cluster.local/
+    url: http://helm-registry.helm-registry.svc.cluster.local:8080/
 releases:
   - name: helm-repository
     chart: base
