@@ -27,6 +27,6 @@ jobs:
       - name: Init and apply the helmfile
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          cd tools/registry/helm
+          cd tools/registry/helm/dev
           yes | helmfile init
           yes | helmfile apply
