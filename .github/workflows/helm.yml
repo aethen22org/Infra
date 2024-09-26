@@ -21,7 +21,8 @@ jobs:
     runs-on: arc-runner-set
     steps:
       ### We should have a step that chooses a context based on the environment changed, but as we only have one environment it does not matter
-      # Checks-out repository under $GITHUB_WORKSPACE and inits and applies helmfile
+      # Checks-out repository under $GITHUB_WORKSPACE and inits and applies helmfile, installing a helm repository, though it needs to be there in the first place
+      # so you must first install it manually via helm install helm-registry repository-where-base-was-pushed/base -f .\values.yaml -n arc
       - uses: actions/checkout@v4
       - name: Init and apply the helmfile
         run: |
