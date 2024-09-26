@@ -1,0 +1,30 @@
+name: Helm registry
+
+env:
+  version: v1.0.0
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events only when affecting either the workflow or the agent folder
+  push:
+    paths:
+      - '.github/workflows/helm.yml'
+      - 'tools/registry/helm/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # We only have a build job
+  build:
+    # We run on our arc runners
+    runs-on: arc-runner-set
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+      - name: Init and apply the helmfile
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          cd tools/registry/helm
+          helm init
+          helm apply
