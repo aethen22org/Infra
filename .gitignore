@@ -2,9 +2,14 @@
 id_rsa.pub
 keys.txt
 secrets.yaml
+config
 
 # Volumes
 images/registry/registry/
+volumes
+
+# Useful trash
+dump
 
 # File extensions
 *.pem
