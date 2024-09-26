@@ -1,7 +1,7 @@
 name: Base chart
 
 env:
-  version: v0.0.1
+  version: v1.0.0
 
 # Controls when the workflow will run
 on:
