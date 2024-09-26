@@ -2,8 +2,9 @@ repositories:
   - name: helm-repository 
     url: http://helm-registry.helm-registry.svc.cluster.local:8080/
 releases:
-  - name: helm-repository
+  - name: helm-registry
     chart: helm-repository/base
+    namespace: default
     version: v1.0.0
     values:
       - ./values.yaml
