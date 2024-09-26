@@ -29,4 +29,4 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cd charts/base
           helm package . --version v1.0.0
-          curl --data-binary "@base-v1.0.0" http://localhost:8080/api/charts
+          curl --data-binary "@base-v1.0.0" http://helm-registry.helm-registry.svc.cluster.local:8080/api/charts
