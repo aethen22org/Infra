@@ -20,11 +20,12 @@ jobs:
     # We run on our arc runners
     runs-on: arc-runner-set
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      ### We should have a step that chooses a context based on the environment changed, but as we only have one environment it does not matter
+      # Checks-out repository under $GITHUB_WORKSPACE and inits and applies helmfile
       - uses: actions/checkout@v4
       - name: Init and apply the helmfile
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cd tools/registry/helm
           yes | helmfile init
-          helmfile apply
+          yes | helmfile apply
