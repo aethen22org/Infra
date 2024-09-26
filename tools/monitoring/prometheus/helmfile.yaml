@@ -1,7 +1,11 @@
 repositories:
   - name: prometheus-community
     url: https://prometheus-community.github.io/helm-charts
+    prometheus-crds prometheus-community/prometheus-operator-crds
 releases:
+  - name: prometheus-crds
+    chart: prometheus-community/prometheus-operator-crds
+    version: 14.0.0
   - name: prometheus
     chart: prometheus-community/prometheus
     version: 25.27.0
