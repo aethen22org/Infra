@@ -1,41 +1,17 @@
-# Default values
-
-# Override the chart name
 nameOverride: "helm-registry"
-
-# The service this workload is part of
-# fullappOverride: ""
-
-appVersion: 0.0.1
-
-# Environment:
+appVersion: 1.0.0
 environment: dev
-
 k8s:
   defaultNode: minikube
-  # extraAnnotations: {}
-  # If Namespace is not set, wil use chart name
   namespace: helm-registry
   deployment:
-    # Either Deployment or StatefulSet
     kind: Deployment
-      # In case of StatefulSet, set podManagementPolicy
-      # podManagementPolicy: ""
-    # Enabled by default
     enabled: true
-    # Image to use
     image:
-      # Registry to pull from
       registry: ghcr.io
-      # Tag to use
       tag: helm/chartmuseum:v0.14.0
-      # ImagePullPolicy
       pullPolicy: Always
-    # Default command and args are empty
-    # command:
-    # args:
     replicaCount: 1
-    # Requests and limits:
     resources:
       limits:
         memory: 1024Mi
@@ -43,7 +19,6 @@ k8s:
       requests:
         memory: 128Mi
         cpu: 100m
-    # Decide if we want probes or not, mostly for testing or debugging purposes
     enableProbes: true 
     startupProbe:
       initialDelaySeconds: 30
@@ -72,70 +47,14 @@ k8s:
       httpGet:
         path: /
         port: 8080
-    # Deployment strategy configuration
-    strategy:
-      type: RollingUpdate
-      maxSurge: "25%"
-      maxUnavailable: "25%"
-    # In case you need to set hosts
-    hostAliases: []
-    # Node tolerations
-    tolerations: []
-    # Node selector
-    nodeSelector:
-    # Node affinity
-    nodeAffinity:
-    # pod annotiations
-    # extraPodAnnotations:
     environment:
-      # Environment variables
       extraVars: 
       - name: STORAGE
         value: local
       - name: STORAGE_LOCAL_ROOTDIR
         value: /charts
       - name: DEBUG
-        value: "1"
-      # Example:
-      # extraVars: []
-      # - name: varName
-      #   value: "varValue"
-      # Ports, by default we open service 
-      extraPorts: []
-        # - name : portName
-        #   protocol: TCP
-        #   port: 8080
-    serviceAccount:
-      # Wether or not to create a service account
-      create: false
-      # If create is true and no name is provided, template 'base.name' will be used
-      name: ""
-      # Annotations for the service account
-      annotations: {}
-    # Security Context, only used if set
-    securityContext:
-  hpa:
-    # Enabled by default
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 4
-    targetCPUUtilizationPercentage: 90
-    scaleDown:
-      stabilizationWindowSeconds: 300
-      selectPolicy: Max # Min, Max or Disabled
-      policies:
-      - type: Percent
-        value: 100
-        periodSeconds: 15
-    scaleUp:
-      stabilizationWindowSeconds: 0
-      selectPolicy: Max # Min, Max or Disabled
-      policies:
-      - type: Percent
-        value: 100
-        periodSeconds: 15
   persistentVolume:
-    # Disabled by default
     enabled: true
     accessModes: ReadWriteMany
     annotations: {}
@@ -144,31 +63,19 @@ k8s:
     size: 15Gi
     class: local-storage
     subPath: ""
-    localPath: /volumes/helm # I use /d/images/registry/registry for the registry, as i have my registry mounted on minikube from a local folder
+    localPath: /volumes/helm
     persistentVolumeReclaimPolicy: Retain
     name: helm-registry
   service:
-    # Enabled by default
     enabled: true
     name: http
-    type: LoadBalancer # ClusterIP, LoadBalancer or NodePort
-    # If LoadBalancerIP is not set and you are using LoadBalancer, it will be an ephemeral IP address
-    # loadBalancerIP: X.X.X.X
+    type: LoadBalancer
     externalPort: 8080
     internalPort: 8080
-    protocol: TCP # TCP, UDP or SCTP if your K8s allows it
-  monitoring:
-    serviceMonitor:
-      # Disabled by default
-      enabled: false
-      endpoints: []
+    protocol: TCP
   ingress:
-    # Disabled by default
     enabled: true
     ingressClassName: nginx
-    # tls:
-    # - hosts: []
-    #   secretName: 
     rules:
     - host: helm-registry.localhost
       paths:
