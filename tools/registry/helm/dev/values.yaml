@@ -2,6 +2,7 @@ nameOverride: "helm-registry"
 appVersion: 1.0.0
 environment: dev
 k8s:
+  createNamespace: true
   defaultNode: minikube
   namespace: helm-registry
   deployment:

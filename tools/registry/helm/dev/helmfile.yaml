@@ -5,6 +5,6 @@ releases:
   - name: helm-registry
     namespace: registries
     chart: helm-repository/base
-    version: v1.0.0
+    version: v1.0.1
     values:
       - ./values.yaml
