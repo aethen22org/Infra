@@ -1,12 +1,10 @@
-name: Agent
+name: Agent image
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push events only when affecting either the workflow or the agent folder
   push:
-    paths:
-      - '.github/workflows/agent.yml'
-      - 'images/agent/**'
+    tags:
+      - 'image/agent:**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -19,7 +17,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-
+      - name: Split tag name
+        env:
+          TAG: ${{ github.ref_name }}
+        id: split
+        run: echo "::set-output name=version::${TAG##*:}"
       # Step 1: Prepare environment (copy keys, pull cache image)
       - name: Prepare environment and pull cache image
         run: |
@@ -35,6 +37,6 @@ jobs:
           docker build . \
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --cache-from docker-registry.docker-registry.svc.cluster.local/agent:latest \
-            -t docker-registry.docker-registry.svc.cluster.local/agent:$COMMIT_SHA \
+            -t docker-registry.docker-registry.svc.cluster.local/agent:${{ steps.split.outputs.version }} \
             -t docker-registry.docker-registry.svc.cluster.local/agent:latest
           docker push docker-registry.docker-registry.svc.cluster.local/agent -a
