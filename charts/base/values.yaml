@@ -10,6 +10,8 @@
 environment: dev
 
 k8s:
+  # If set to enabled, will create the namespacefrom chart instead of helm --create-namespace
+  createNamespace: false
   # extraAnnotations: {}
   # If Namespace is not set, wil use chart name
   # namespace: ""
