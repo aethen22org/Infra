@@ -10,7 +10,7 @@ on:
     tags-ignore:
       - '**'
     paths:
-      - '.github/workflows/grafana.yml'
+      - '.github/workflows/arc.yml'
       - 'tools/arc/**'
 
   # Allows you to run this workflow manually from the Actions tab
