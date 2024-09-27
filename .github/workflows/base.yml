@@ -1,15 +1,9 @@
 name: Base chart
 
-env:
-  version: v1.0.1
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push events only when affecting either the workflow or the agent folder
   push:
-    paths:
-      - '.github/workflows/base.yml'
-      - 'charts/base/**'
+    tags:
+      - 'chart/base:**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -22,6 +16,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+      - name: Split tag name
+        env:
+          TAG: ${{ github.ref_name }}
+        id: split
+        run: echo "::set-output name=version::${TAG##*:}"
       - name: Check if chart renders
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -31,5 +30,5 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cd charts/base
-          helm package . --version $version
-          curl --data-binary "@base-$version.tgz" http://helm-registry.helm-registry.svc.cluster.local:8080/api/charts
+          helm package . --version ${{ steps.split.outputs.version }}
+          curl --data-binary "@base-${{ steps.split.outputs.version }}.tgz" http://helm-registry.helm-registry.svc.cluster.local:8080/api/charts
