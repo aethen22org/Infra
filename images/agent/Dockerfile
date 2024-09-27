@@ -27,6 +27,9 @@ COPY scripts /home/runner/scripts
 # Copy the age recipient into sops folder
 COPY keys.txt /home/runner/sops/age/keys.txt
 
+# Copy the base chart inside the agent
+COPY base /opt/base
+
 # Setup XDG_CONFIG_HOME and HOME environmental variable for sops
 ENV XDG_CONFIG_HOME=/home/runner
 ENV HOME=/home/runner
