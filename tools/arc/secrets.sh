@@ -39,7 +39,7 @@ else
   /bin/bash -c  "yq -n $GITHUB_INSTALLATION_ID" >> secrets.yaml
   echo "Input your Github Application private key:"
   read GITHUB_APP_PRIVATE_KEY
-  GITHUB_APP_PRIVATE_KEY="'.github_application_private_key= \"$GITHUB_APP_PRIVATE_KEY\"'"
+  GITHUB_APP_PRIVATE_KEY="'.github_application_private_key=\"$GITHUB_APP_PRIVATE_KEY\"'"
   /bin/bash -c  "yq -n $GITHUB_APP_PRIVATE_KEY" >> secrets.yaml
   echo "Input your organization:"
   read ORG
@@ -52,7 +52,7 @@ fi
 NAMESPACE=`yq '.namespace' secrets.yaml`
 GITHUB_APPID=`yq '.github_application_id' secrets.yaml`
 GITHUB_INSTALLATION_ID=`yq '.github_application_instalation_id' secrets.yaml`
-GITHUB_APP_PRIVATE_KEY=`yq --unwrapScalar=false '.github_application_private_key' secrets.yaml`
+GITHUB_APP_PRIVATE_KEY=`yq '.github_application_private_key' secrets.yaml`
 ORG=`yq '.organization' secrets.yaml`
 
 if [ "$INSTALL" = "true" ]; then
