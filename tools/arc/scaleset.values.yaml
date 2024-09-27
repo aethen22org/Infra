@@ -203,3 +203,6 @@ template:
 # controllerServiceAccount:
 #   namespace: arc
 #   name: test-arc-gha-runner-scale-set-controller
+controllerServiceAccount:
+  namespace: arc
+  name: actions-runner-controller-gha-rs-controller
