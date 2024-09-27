@@ -4,9 +4,11 @@ repositories:
 releases:
   - name: prometheus-crds
     chart: prometheus-community/prometheus-operator-crds
+    namespace: monitoring
     version: 14.0.0
   - name: prometheus
     chart: prometheus-community/prometheus
+    namespace: monitoring
     version: 25.27.0
     values:
       - ./values.yaml
