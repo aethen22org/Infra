@@ -2,12 +2,6 @@ repositories:
   - name: helm-repository 
     url: http://helm-registry.helm-registry.svc.cluster.local:8080/
 releases:
-  - name: arc-sa
-    chart: helm-repository/base
-    namespace: arc
-    version: v1.0.0
-    values:
-      - ./serviceaccount.yaml
   - name: arc
     chart: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
     namespace: arc
@@ -19,4 +13,4 @@ releases:
     namespace: arc
     version: 0.9.3
     values:
-      - ./controller.values.yaml
+      - ./scaleset.values.yaml
