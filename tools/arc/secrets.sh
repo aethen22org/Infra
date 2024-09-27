@@ -63,7 +63,7 @@ if [ "$INSTALL" = "true" ]; then
       --namespace="${NAMESPACE}" \
       --from-literal=github_app_id="${GITHUB_APPID}" \
       --from-literal=github_app_installation_id="${GITHUB_INSTALLATION_ID}" \
-      --from-literal=github_app_private_key="$(GITHUB_APP_PRIVATE_KEY)"
+      --from-literal=github_app_private_key="${GITHUB_APP_PRIVATE_KEY}"
   # Install arc controller
   helm install arc \
       --namespace "${NAMESPACE}" \
