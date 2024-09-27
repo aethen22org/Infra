@@ -10,6 +10,8 @@ on:
     tags-ignore:
       - 'image-**'
       - 'chart-**'
+    branches:
+      - '**'
     paths:
       - '.github/workflows/docker.yml'
       - 'tools/registry/docker/dev/**'

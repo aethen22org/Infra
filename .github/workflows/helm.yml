@@ -10,6 +10,8 @@ on:
     tags-ignore:
       - 'image-**'
       - 'chart-**'
+    branches:
+      - '**'
     paths:
       - '.github/workflows/helm.yml'
       - 'tools/registry/helm/dev/**'
