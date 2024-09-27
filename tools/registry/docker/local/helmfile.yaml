@@ -3,6 +3,7 @@ repositories:
     url: http://helm-registry.helm-registry.svc.cluster.local:8080/
 releases:
   - name: docker-registry
+    namespace: registries
     chart: helm-repository/base
     version: v1.0.0
     values:
