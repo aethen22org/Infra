@@ -1,0 +1,15 @@
+releases:
+  - name: arc
+    chart: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
+    version: 0.9.3
+    values:
+      - ./controller.values.yaml
+  - name: arc-runner-set
+    chart: oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
+    version: 0.9.3
+    values:
+      - ./controller.values.yaml
+
+
+
+
