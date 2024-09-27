@@ -52,7 +52,8 @@ fi
 NAMESPACE=`yq '.namespace' secrets.yaml`
 GITHUB_APPID=`yq '.github_application_id' secrets.yaml`
 GITHUB_INSTALLATION_ID=`yq '.github_application_instalation_id' secrets.yaml`
-GITHUB_APP_PRIVATE_KEY=`yq '.github_application_private_key' secrets.yaml`
+GITHUB_APP_PRIVATE_KEY=`yq --unwrapScalar=false '.github_application_private_key' secrets.yaml`
+echo "${GITHUB_APP_PRIVATE_KEY}"
 ORG=`yq '.organization' secrets.yaml`
 
 if [ "$INSTALL" = "true" ]; then
