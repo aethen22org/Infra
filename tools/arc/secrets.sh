@@ -79,11 +79,11 @@ if [ "$INSTALL" = "true" ]; then
       -f scaleset.values.yaml
 else
   # Delete Kubernetes secrets in case we need to replace them
-  kubectl delete secret arc-gh-secret
+  kubectl delete secret arc-gh-secret -n ${NAMESPACE}
   # Create kubernetes secrets
   kubectl create secret generic arc-gh-secret \
       --namespace="${NAMESPACE}" \
       --from-literal=github_app_id="${GITHUB_APPID}" \
       --from-literal=github_app_installation_id="${GITHUB_INSTALLATION_ID}" \
-      --from-literal=github_app_private_key="$(GITHUB_APP_PRIVATE_KEY)"
+      --from-literal=github_app_private_key="${GITHUB_APP_PRIVATE_KEY}"
 fi
