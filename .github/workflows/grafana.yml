@@ -8,7 +8,8 @@ on:
   # Triggers the workflow on push events only when affecting either the workflow or the agent folder
   push:
     tags-ignore:
-      - '**'
+      - 'image-**'
+      - 'chart-**'
     paths:
       - '.github/workflows/grafana.yml'
       - 'tools/monitoring/grafana/**'
