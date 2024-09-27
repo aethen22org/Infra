@@ -3,7 +3,7 @@ name: Base chart
 on:
   push:
     tags:
-      - 'chart/base:**'
+      - 'chart-base/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         id: split
-        run: echo "::set-output name=version::${TAG##*:}"
+        run: echo "::set-output name=version::${TAG##*/}"
       - name: Check if chart renders
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
