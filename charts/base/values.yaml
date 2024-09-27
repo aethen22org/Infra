@@ -101,6 +101,8 @@ k8s:
       create: false
       # If create is true and no name is provided, template 'base.name' will be used
       name: ""
+      # Labels for the service account, overrides base labels
+      labels: {}
       # Annotations for the service account
       annotations: {}
     # Security Context, only used if set
