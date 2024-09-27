@@ -12,6 +12,7 @@ appVersion: 0.0.1
 environment: dev
 
 k8s:
+  createNamespace: true
   defaultNode: minikube
   # extraAnnotations: {}
   # If Namespace is not set, wil use chart name
