@@ -88,13 +88,13 @@ k8s:
     # extraPodAnnotations:
     environment:
       # Environment variables
-      extraVars: []
+      extraVars: {}
       # Example:
       # extraVars: []
       # - name: varName
       #   value: "varValue"
       # Ports, by default we open service 
-      extraPorts: []
+      extraPorts: {}
         # - name : portName
         #   protocol: TCP
         #   port: 8080
