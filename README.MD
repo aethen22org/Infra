@@ -35,7 +35,7 @@ After installing Minikube you have to start the cluster, we normally use a volum
 
 To start with this volume run this `minikube start --mount --mount-string="/path/to/your/local/repository/volumes:/volumes/" --network-plugin=cni --cni=bridge`
 
-Why Minikube? Just so we can have the poor man's Lens by using `minikube dashboard` and so that we can use `minikube tunnel` instead of port-forwards, which makes it easier to run
+Why Minikube? Just so we can have the poor man's Lens by using `minikube dashboard` and so that we can use `minikube tunnel` instead of port-forwards, which makes it easier to run, run both before following with the next steps
 
 After setting up Minikube we should start deploying our registries and arc, which we will use to deploy everything else, this is done via:
 
@@ -52,6 +52,20 @@ With this, your cluster is set to run, but you need to push images to these repo
 `git tag chart-base/v1.0.4`
 
 We use version 1.0.4 because helmfiles are configured for that version, as it was the last working one
+
+The first time we push the agent image, we need to do it manually, do this via
+
+`eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)`
+`mv charts/base images/agent/base`
+`cd images/agent`
+`docker build . --build-arg BUILDKIT_INLINE_CACHE=1 -t localhost:5000/agent:latest`
+`docker push localhost:5000/agent -a`
+
+Then just run this to return the repository to it's original state
+
+`git restore .`
+
+Launch image-agent cicd
 
 `git tag image-agent/v1.0.1`
 
