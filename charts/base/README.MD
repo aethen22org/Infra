@@ -26,4 +26,4 @@ We should have istio configurations, roleBindings and roles, but they are not do
 
 ## Values
 
-Values configuration is documented under values.yaml
+Values configuration is documented under values.yaml, any comment that contains code is an example of what should be filled
