@@ -13,10 +13,17 @@ This ci/cd agent has the following tools installed:
 - actions runner
 - yq
 - sops
+- make
+- kubectl 
+- helmfile
+- helm
 
 Of which:
 - yq
 - sops
+- kubectl 
+- helmfile
+- helm
 
 Were installed with brew, if you need to use them, run `eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"` before running them
 
@@ -26,5 +33,4 @@ It copies(and need) a keys.txt file, which is an age recipient used by sops to d
 
 `age-keygen -o keys.txt`
 
-If this was meant for a production setting, then that files should be retrieved from a secure vault with RBAC and delete lines 31-33
-
+If this was meant for a production setting, then that file should be retrieved from a secure vault with RBAC and delete lines 27-29
