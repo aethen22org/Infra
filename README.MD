@@ -61,9 +61,9 @@ The first time we push the agent image, we need to do it manually, do this via
 `docker build . --build-arg BUILDKIT_INLINE_CACHE=1 -t localhost:5000/agent:latest`
 `docker push localhost:5000/agent -a`
 
-Then just run this to return the repository to it's original state
+Then just run this on the repository root to return the repository to it's original state
 
-`git restore .`
+`git restore . && rm -rf images/agent/base`
 
 Launch image-agent cicd
 
