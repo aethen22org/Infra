@@ -20,7 +20,7 @@ on:
 
 jobs:
   # We only have a deploy job
-  build:
+  deploy:
     # We run on our arc runners
     runs-on: arc-runner-set
     steps:

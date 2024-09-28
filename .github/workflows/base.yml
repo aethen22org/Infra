@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  # We only have a build job
-  build:
+  # We only have a deploy job
+  deploy:
     # We run on our arc runners
     runs-on: arc-runner-set
     steps:

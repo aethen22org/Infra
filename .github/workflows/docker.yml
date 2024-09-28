@@ -3,9 +3,8 @@ name: Docker registry
 env:
   version: v1.0.0
 
-# Controls when the workflow will run
+# Triggers the workflow on push events only when affecting either the workflow or the docker dev folder
 on:
-  # Triggers the workflow on push events only when affecting either the workflow or the agent folder
   push:
     tags-ignore:
       - 'image-**'
@@ -20,14 +19,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  # We only have a build job
-  build:
+  # We only have a deploy job
+  deploy:
     # We run on our arc runners
     runs-on: arc-runner-set
     steps:
       ### We should have a step that chooses a context based on the environment changed, but as we only have one environment it does not matter
       # Checks-out repository under $GITHUB_WORKSPACE and inits and applies helmfile, installing a helm repository, though it needs to be there in the first place
-      # so you must first install it manually via helm install helm-registry repository-where-base-was-pushed/base -f .\values.yaml -n arc
+      # so you must first install it manually via helm install helm-registry repository-where-base-was-pushed/charts/base -f .\values.yaml -n registries
+      # if the namespace registries does not exist, create it first
       - uses: actions/checkout@v4
       - name: Init and apply the helmfile
         run: |
