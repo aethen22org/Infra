@@ -21,9 +21,6 @@ RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/instal
 # Install brew utilities
 RUN /home/linuxbrew/.linuxbrew/bin/brew install gcc yq sops kubectl helmfile
 
-# Copy scripts for later usage
-COPY scripts /home/runner/scripts
-
 # Copy the age recipient into sops folder
 COPY keys.txt /home/runner/sops/age/keys.txt
 
