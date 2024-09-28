@@ -12,6 +12,7 @@ environment: dev
 k8s:
   # If set to enabled, will create the namespacefrom chart instead of helm --create-namespace
   createNamespace: false
+  # Any annotations set in extraAnnotations will be set on every resource
   # extraAnnotations: {}
   # If Namespace is not set, wil use chart name
   # namespace: ""
@@ -22,23 +23,25 @@ k8s:
       # podManagementPolicy: ""
     # Enabled by default
     enabled: true
-    # Image to use
+    # Image configurations
     image:
       # Registry to pull from
       # registry: localhost:5000
-      # Tag to use
+      # Tag to use, must include image name and version, such as myImage:latest
       tag: latest
       # ImagePullPolicy
       pullPolicy: IfNotPresent
     # Default command and args are empty
     # command:
     # args:
+    # replicaCount is not used if hpa are enabled
     replicaCount: 1
     # Requests and limits:
     resources:
       requests:
         cpu: 10m
         memory: 35Mi
+      # limits are disabled by default
       # limits:
       #   cpu:
       #   memory:
@@ -76,7 +79,7 @@ k8s:
       type: RollingUpdate
       maxSurge: "25%"
       maxUnavailable: "25%"
-    # In case you need to set hosts
+    # In case you need to set etc/hosts
     hostAliases: []
     # Node tolerations
     tolerations: []
@@ -84,7 +87,7 @@ k8s:
     nodeSelector:
     # Node affinity
     nodeAffinity:
-    # pod annotiations
+    # pod annotiations, these extra annotations are only applied to pods
     # extraPodAnnotations:
     environment:
       # Environment variables
@@ -93,7 +96,7 @@ k8s:
       # extraVars: []
       # - name: varName
       #   value: "varValue"
-      # Ports, by default we open service 
+      # Ports, by default we open service ports
       extraPorts: {}
         # - name : portName
         #   protocol: TCP
@@ -105,7 +108,7 @@ k8s:
       name: ""
       # Labels for the service account, overrides base labels
       labels: {}
-      # Annotations for the service account
+      # Annotations for the service account, added to base annotations or other extra annotations
       annotations: {}
     # Security Context, only used if set
     securityContext:
@@ -157,6 +160,10 @@ k8s:
       # Disabled by default
       enabled: false
       endpoints: []
+          # - path: /api/metrics
+          # port: prometheus
+          # interval: "30s"
+          # scrapeTimeout: "5s"
   ingress:
     # Disabled by default
     enabled: false
