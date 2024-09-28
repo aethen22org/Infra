@@ -1,5 +1,6 @@
 name: Base chart
 
+# The workflow only runs on tags that start with chart-base/
 on:
   push:
     tags:
@@ -14,18 +15,21 @@ jobs:
     # We run on our arc runners
     runs-on: arc-runner-set
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checks-out repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v4
+      # Get tag name and save it under an output
       - name: Split tag name
         env:
           TAG: ${{ github.ref_name }}
         id: split
         run: echo "::set-output name=version::${TAG##*/}"
+      # Template the chart to see if it renders
       - name: Check if chart renders
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cd charts/base
           helm template .
+      # Package and push our helm chart with the correct version from step 2
       - name: Package and push helm chart
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
