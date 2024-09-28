@@ -1,6 +1,6 @@
 name: Agent image
 
-# Controls when the workflow will run
+# The workflow only runs on tags that start with image-agent/
 on:
   push:
     tags:
@@ -15,7 +15,7 @@ jobs:
     # We run on our arc runners
     runs-on: arc-runner-set
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Checks-out repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v4
       - name: Split tag name
         env:
@@ -29,7 +29,7 @@ jobs:
           cp /home/runner/sops/age/keys.txt keys.txt
           docker pull docker-registry.docker-registry.svc.cluster.local/agent:latest || true
 
-      # Step 3: Build the Docker image with cache and push it
+      # Step 2: Build the Docker image with cache and push it
       - name: Build Docker image
         run: |
           mv charts/base images/agent/base
